@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prioritas Tugas Mahasiswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-green-50 text-gray-800">
+    <!-- Halaman Awal -->
+    <div
+      id="halaman1"
+      class="min-h-screen flex items-center justify-center flex-col p-8"
+    >
+      <img
+        src="https://freeimage.host/i/FJ1KUXe"
+        alt="Gambar dari Google Drive"
+        class="w-80 mb-6 rounded shadow"
+      />
+      <h1 class="text-4xl font-bold text-green-700 mb-4 text-center">
+        WELCOME TO PLANMATES
+      </h1>
+      <p class="text-center max-w-xl mb-6">
+        Kelola tugas mingguanmu dengan mudah berdasarkan prioritas penting dan
+        deadline. Mulai rencanakan dengan lebih bijak dan produktif!
+      </p>
+
+      <!-- Input Username -->
+      <input
+        type="text"
+        id="usernameInput"
+        placeholder="Masukkan nama atau username"
+        required
+        class="mb-6 px-4 py-2 border rounded w-72 text-center"
+      />
+
+      <button
+        onclick="showHalaman2()"
+        class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-lg transition"
+      >
+        Mulai Mengisi Tugas
+      </button>
+    </div>
+
+    <!-- Halaman Input dan Daftar Tugas -->
+    <div id="halaman2" class="hidden p-4">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center text-green-700 mb-6">
+          📚 Jadwalku Minggu Ini
+        </h1>
+
+        <form id="taskForm" class="bg-white shadow-md rounded p-6 space-y-4">
+          <div>
+            <label class="block mb-1 font-semibold">Nama Tugas</label>
+            <input
+              type="text"
+              id="namaTugas"
+              required
+              class="w-full border rounded px-3 py-2"
+            />
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold">Jenis Tugas</label>
+            <select id="jenisTugas" class="w-full border rounded px-3 py-2">
+              <option value="7">Skripsi</option>
+              <option value="7">Artikel / Laporan penting</option>
+              <option value="6">Proyek besar</option>
+              <option value="6">Harian</option>
+              <option value="6">Presentasi pribadi</option>
+              <option value="5">Kelompok</option>
+              <option value="5">Belajar mandiri</option>
+              <option value="1">Hobi</option>
+              <option value="0">Nongkrong</option>
+              <option value="2">Rapat</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold">Deadline (kategori)</label>
+            <select
+              id="kategoriDeadline"
+              class="w-full border rounded px-3 py-2"
+            >
+              <option value="2">0 - 2 hari</option>
+              <option value="1">3 - 4 hari</option>
+              <option value="0">5 - 7 hari</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold">Deadline (WIB)</label>
+            <input
+              type="datetime-local"
+              id="tanggalDeadline"
+              required
+              class="w-full border rounded px-3 py-2"
+            />
+          </div>
+          <button
+            type="submit"
+            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+          >
+            Tambah Tugas
+          </button>
+        </form>
+
+        <div
+          id="notif"
+          class="hidden mt-4 text-center text-green-600 font-medium"
+        ></div>
+
+        <div class="mt-8">
+          <h2 class="text-xl font-semibold mb-3">📌 Daftar Tugas</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded">
+              <thead class="bg-green-600 text-white">
+                <tr>
+                  <th class="px-4 py-2 text-left">✓</th>
+                  <th class="px-4 py-2 text-left">Nama</th>
+                  <th class="px-4 py-2 text-left">Jenis</th>
+                  <th class="px-4 py-2 text-left">Tanggal</th>
+                  <th class="px-4 py-2 text-left">Jam</th>
+                  <th class="px-4 py-2 text-left">Kategori</th>
+                </tr>
+              </thead>
+              <tbody id="tabelTugas" class="divide-y divide-gray-200"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h2 class="text-xl font-semibold mb-3">✅ Tugas Selesai</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded">
+              <thead class="bg-gray-400 text-white">
+                <tr>
+                  <th class="px-4 py-2 text-left">✓</th>
+                  <th class="px-4 py-2 text-left">Nama</th>
+                  <th class="px-4 py-2 text-left">Jenis</th>
+                  <th class="px-4 py-2 text-left">Tanggal</th>
+                  <th class="px-4 py-2 text-left">Jam</th>
+                  <th class="px-4 py-2 text-left">Kategori</th>
+                  <th class="px-4 py-2 text-left">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tugasSelesai" class="divide-y divide-gray-200"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const halaman1 = document.getElementById("halaman1");
+      const halaman2 = document.getElementById("halaman2");
+      const form = document.getElementById("taskForm");
+      const tabelBody = document.getElementById("tabelTugas");
+      const selesaiBody = document.getElementById("tugasSelesai");
+      const notif = document.getElementById("notif");
+
+      let username = "";
+      let tugasList = [];
+      let tugasSelesaiList = [];
+
+      // Fungsi untuk menampilkan label kategori berdasarkan total poin
+      const kategoriLabel = (score) => {
+        if (score >= 8) return "Penting - Mendesak";
+        if (score >= 4) return "Penting - Tidak Mendesak";
+        if (score >= 2) return "Tidak Penting - Mendesak";
+        return "Tidak Penting - Tidak Mendesak";
+      };
+
+      // Fungsi untuk memberi kelas warna berdasarkan kategori
+      const kategoriColor = (kategori) => {
+        if (kategori === "Penting - Mendesak")
+          return "text-red-600 font-semibold";
+        if (kategori === "Penting - Tidak Mendesak")
+          return "text-yellow-600 font-semibold";
+        if (kategori === "Tidak Penting - Mendesak")
+          return "text-blue-600 font-semibold";
+        return "text-gray-600 font-semibold";
+      };
+
+      // Tampilkan halaman 2 dan load data tugas untuk username
+      function showHalaman2() {
+        const input = document.getElementById("usernameInput").value.trim();
+        if (!input) {
+          alert("Masukkan nama atau username terlebih dahulu.");
+          return;
+        }
+        username = input;
+        halaman1.classList.add("hidden");
+        halaman2.classList.remove("hidden");
+        loadData();
+      }
+
+      // Simpan data tugas ke localStorage sesuai username
+      function saveData() {
+        localStorage.setItem(`tugas_${username}`, JSON.stringify(tugasList));
+        localStorage.setItem(
+          `tugasSelesai_${username}`,
+          JSON.stringify(tugasSelesaiList)
+        );
+      }
+
+      // Muat data tugas dari localStorage sesuai username
+      function loadData() {
+        const data = localStorage.getItem(`tugas_${username}`);
+        tugasList = data ? JSON.parse(data) : [];
+
+        const dataSelesai = localStorage.getItem(`tugasSelesai_${username}`);
+        tugasSelesaiList = dataSelesai ? JSON.parse(dataSelesai) : [];
+
+        renderTugas();
+        renderTugasSelesai();
+      }
+
+      // Render tabel tugas aktif
+      const renderTugas = () => {
+        tabelBody.innerHTML = "";
+        // Urutkan berdasarkan total poin descending
+        tugasList.sort((a, b) => b.total - a.total);
+
+        tugasList.forEach((tugas, index) => {
+          const row = document.createElement("tr");
+          row.className = "hover:bg-green-50 transition";
+          row.innerHTML = `
+            <td class="px-4 py-2">
+              <input type="checkbox" class="selesaikanTugas" data-index="${index}" />
+            </td>
+            <td class="px-4 py-2">${tugas.nama}</td>
+            <td class="px-4 py-2">${tugas.jenisText}</td>
+            <td class="px-4 py-2">${tugas.tanggalWIB}</td>
+            <td class="px-4 py-2">${tugas.jamWIB}</td>
+            <td class="px-4 py-2 ${kategoriColor(tugas.kategori)}">${
+            tugas.kategori
+          }</td>
+          `;
+          row
+            .querySelector(".selesaikanTugas")
+            .addEventListener("change", function () {
+              if (this.checked) {
+                tugasSelesaiList.push(tugasList[index]);
+                tugasList.splice(index, 1);
+                saveData();
+                renderTugas();
+                renderTugasSelesai();
+              }
+            });
+          tabelBody.appendChild(row);
+        });
+      };
+
+      // Render tabel tugas selesai
+      const renderTugasSelesai = () => {
+        selesaiBody.innerHTML = "";
+        tugasSelesaiList.forEach((tugas, index) => {
+          const row = document.createElement("tr");
+          row.className = "bg-gray-100 hover:bg-gray-200 transition";
+          row.innerHTML = `
+            <td class="px-4 py-2"><input type="checkbox" checked disabled /></td>
+            <td class="px-4 py-2 line-through">${tugas.nama}</td>
+            <td class="px-4 py-2 line-through">${tugas.jenisText}</td>
+            <td class="px-4 py-2 line-through">${tugas.tanggalWIB}</td>
+            <td class="px-4 py-2 line-through">${tugas.jamWIB}</td>
+            <td class="px-4 py-2 ${kategoriColor(
+              tugas.kategori
+            )} line-through">${tugas.kategori}</td>
+            <td class="px-4 py-2">
+              <button class="text-red-600 hover:text-red-800 font-semibold batalSelesai" data-index="${index}">Batalkan</button>
+            </td>
+          `;
+          row.querySelector(".batalSelesai").addEventListener("click", () => {
+            tugasList.push(tugasSelesaiList[index]);
+            tugasSelesaiList.splice(index, 1);
+            saveData();
+            renderTugas();
+            renderTugasSelesai();
+          });
+          selesaiBody.appendChild(row);
+        });
+      };
+
+      // Tangani submit form tambah tugas
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const nama = document.getElementById("namaTugas").value.trim();
+        const jenisVal = document.getElementById("jenisTugas").value;
+        const kategoriVal = document.getElementById("kategoriDeadline").value;
+        const tanggalDeadline =
+          document.getElementById("tanggalDeadline").value;
+
+        if (!nama || !tanggalDeadline) {
+          alert("Mohon lengkapi semua data tugas.");
+          return;
+        }
+
+        // Hitung total poin
+        const total = Number(jenisVal) + Number(kategoriVal);
+
+        // Nama jenis berdasarkan opsi
+        const jenisText =
+          document.getElementById("jenisTugas").selectedOptions[0].text;
+
+        // Format tanggal dan jam WIB
+        const dateObj = new Date(tanggalDeadline);
+        const tanggalWIB = dateObj.toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+        const jamWIB = dateObj.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+
+        const kategori = kategoriLabel(total);
+
+        const tugasBaru = {
+          nama,
+          jenisVal: Number(jenisVal),
+          kategoriVal: Number(kategoriVal),
+          total,
+          jenisText,
+          tanggalDeadline,
+          tanggalWIB,
+          jamWIB,
+          kategori,
+        };
+
+        tugasList.push(tugasBaru);
+        saveData();
+        renderTugas();
+
+        // Reset form
+        form.reset();
+
+        notif.textContent = `Tugas "${nama}" berhasil ditambahkan!`;
+        notif.classList.remove("hidden");
+        setTimeout(() => notif.classList.add("hidden"), 3000);
+      });
+    </script>
+  </body>
+</html>
